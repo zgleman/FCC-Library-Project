@@ -27,7 +27,8 @@ module.exports = function (app) {
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
      Book.find({}, function(err, data){
        if (err) return (err);
-       var log = data.forEach((d)=>{ return {title: d.title, _id: d.id, commentcount: d.comments.length()} });
+       var log = data.map((d)=>{ return {title: d.title, _id: d.id, commentcount: d.comments.length} });
+       console.log(log);
        res.json(log);
      })
     })
