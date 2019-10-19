@@ -17,7 +17,7 @@ var mongoose = require('mongoose');
 mongoose.connect(MONGODB_CONNECTION_STRING, {useNewUrlParser: true});
 const Book = mongoose.model('Book', { 
 title:	String,
-Comments: []
+comments: []
 });
 module.exports = function (app) {
 
@@ -25,7 +25,11 @@ module.exports = function (app) {
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    
+     Book.find({}, function(err, data){
+       if (err) return (err);
+       var log = data.forEach((d)=>{ return {title: d.title, _id: d.id, commentcount: d.comments.length()} });
+       res.json(log);
+     })
     })
     
     .post(function (req, res){
@@ -45,7 +49,7 @@ module.exports = function (app) {
       //if successful response will be 'complete delete successful'
       Book.deleteMany({}, function(err){
         if (err) return (err);
-        return 'completge'
+        return 'complete delete successful'
       })
     });
 
