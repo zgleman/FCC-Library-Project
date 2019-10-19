@@ -20,12 +20,20 @@ module.exports = function (app) {
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    
+    MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {});
     })
     
     .post(function (req, res){
       var title = req.body.title;
       //response will contain new book object including atleast _id and title
+    MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
+      if(err) return (err);
+      db.inventory.insert({ title: title }, function(err, data){
+        if (err) return (err);
+        res.json(data);
+      });
+      
+    });
     })
     
     .delete(function(req, res){
