@@ -13,31 +13,40 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 const MONGODB_CONNECTION_STRING = process.env.DB;
 //Example connection: MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {});
-
+var mongoose = require('mongoose');
+mongoose.connect(MONGODB_CONNECTION_STRING, {useNewUrlParser: true});
+const Book = mongoose.model('Book', { 
+title:	String,
+Comments: []
+});
 module.exports = function (app) {
 
   app.route('/api/books')
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {});
+    
     })
     
     .post(function (req, res){
       var title = req.body.title;
       //response will contain new book object including atleast _id and title
-    MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
-      if(err) return (err);
-      db.inventory.insert({ title: title }, function(err, data){
+      Book.create({
+        title: title
+      }, function(err, data){
         if (err) return (err);
-        res.json(data);
-      });
+        res.json({_id: data._id, title: data.title});
+      })
       
-    });
+   
     })
     
     .delete(function(req, res){
       //if successful response will be 'complete delete successful'
+      Book.deleteMany({}, function(err){
+        if (err) return (err);
+        return 'completge'
+      })
     });
 
 
