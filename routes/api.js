@@ -60,13 +60,18 @@ module.exports = function (app) {
     .get(function (req, res){
       var bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-    Book.exists({_id: bookid}) == false ? 'book does not exist' :  
-    Book.findById(bookid, function(err, data){
-        if (err) return (err);
-      console.log(data);
+    Book.countDocuments({_id: bookid}, function(err, count){
+      if(err) return (err);
+      if (count == 0){
+       res.json({error: 'no book exists'});
+      }
+      if (count == 1) {
+       Book.findById(bookid, function(err, data){
+        if (err) return (err) 
         res.json({_id: data._id, title: data.title, comments: data.comments});
-      })
-     })
+    })}
+       })
+       })
     
     .post(function(req, res){
       var bookid = req.params.id;
