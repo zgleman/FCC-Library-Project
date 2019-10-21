@@ -37,15 +37,17 @@ module.exports = function (app) {
       var title = req.body.title;
       //response will contain new book object including atleast _id and title
       title == "" ? res.json({error: 'Please include book title'}) :
-      Book.exists({ title: title}) ? 
+      Book.countDocuments({title: title}, function(err, count){
+        if ( count > 0) {
         Book.findOne({ title: title}, function(err, data){
           if (err) return (err)
           res.json({_id: data._id, title: data.title});
-        }) :
+        })} else if ( count == 0) {
         Book.create({ title: title }, function(err, data){
           if (err) return (err);
           res.json({_id: data._id, title: data.title});
-        })
+        })}
+      })
       
    
     })
