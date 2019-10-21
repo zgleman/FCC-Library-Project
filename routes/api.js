@@ -27,8 +27,8 @@ module.exports = function (app) {
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
      Book.find({}, function(err, data){
        if (err) return (err);
-       var log = data.map((d)=>{ return {title: d.title, _id: d.id, commentcount: d.comments.length} });
-       console.log(log);
+       var log = data.map((d)=>{ return {_id: d.id, title: d.title, commentcount: d.comments.length} });
+      
        res.json(log);
      })
     })
@@ -59,7 +59,12 @@ module.exports = function (app) {
   app.route('/api/books/:id')
     .get(function (req, res){
       var bookid = req.params.id;
+      Book.exists({ _id: bookid})
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+      Book.findById(bookid, function(err, data){
+        if (err) return 'no book exists'
+        res.json({_id: data._id, title: data.title, comments: data.comments})
+      })
     })
     
     .post(function(req, res){
