@@ -50,7 +50,7 @@ module.exports = function (app) {
       //if successful response will be 'complete delete successful'
       Book.deleteMany({}, function(err){
         if (err) return (err);
-        return 'complete delete successful'
+        return res.send('complete delete successful')
       })
     });
 
