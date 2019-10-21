@@ -90,7 +90,7 @@ suite('Functional Tests', function() {
       
       test('Test GET /api/books/[id] with id not in db',  function(done){
         chai.request(server)
-        .get('/api/books/1ouibh')
+        .get('/api/books/willnotbefound')
         .end(function(err, res){
           assert.equal(res.status, 200);
           assert.equal(res.body.error, 'no book exists');
@@ -100,8 +100,21 @@ suite('Functional Tests', function() {
       
       test('Test GET /api/books/[id] with valid id in db',  function(done){
         chai.request(server)
-        .post('/api/boo)
-        //done();
+        .post('/api/books')
+        .send({title:'testToGet'})
+        .end(function(err, res){
+          chai.request(server)
+          .get('/api/books/' + res.body._id)
+          .end(function(err, res2){
+            assert.equal(res2.status, 200);
+            assert.equal(res2.body.title, 'testToGet');
+            assert.equal(res2.body._id, res.body._id);
+            assert.property(res2.body, 'comments');
+            done();
+          })
+        })
+        
+        
       });
       
     });
@@ -110,7 +123,21 @@ suite('Functional Tests', function() {
     suite('POST /api/books/[id] => add comment/expect book object with id', function(){
       
       test('Test POST /api/books/[id] with comment', function(done){
-        //done();
+        chai.request(server)
+        .post('/api/books')
+        .send({title:'testToComment'})
+        .end(function(err, res){
+          chai.request(server)
+          .post('/api/books/' + res.body._id)
+          .send({comment: 'I like this book'})
+          .end(function(err, res2){
+            assert.equal(res2.status, 200);
+            assert.equal(res2.body.title, 'testToComment');
+            assert.equal(res2.body._id, res.body._id);
+            assert.equal(res2.body.comments, 'I like this book');
+            done();
+          })
+        })
       });
       
     });
