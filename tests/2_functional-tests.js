@@ -134,7 +134,7 @@ suite('Functional Tests', function() {
             assert.equal(res2.status, 200);
             assert.equal(res2.body.title, 'testToComment');
             assert.equal(res2.body._id, res.body._id);
-            assert.equal(res2.body.comments, 'I like this book');
+            assert.equal(res2.body.comments[res2.body.comments.length-1], 'I like this book');
             done();
           })
         })

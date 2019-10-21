@@ -37,12 +37,15 @@ module.exports = function (app) {
       var title = req.body.title;
       //response will contain new book object including atleast _id and title
       title == "" ? res.json({error: 'Please include book title'}) :
-      Book.create({
-        title: title
-      }, function(err, data){
-        if (err) return (err);
-        res.json({_id: data._id, title: data.title});
-      })
+      Book.exists({ title: title}) ? 
+        Book.findOne({ title: title}, function(err, data){
+          if (err) return (err)
+          res.json({_id: data._id, title: data.title});
+        }) :
+        Book.create({ title: title }, function(err, data){
+          if (err) return (err);
+          res.json({_id: data._id, title: data.title});
+        })
       
    
     })
@@ -75,7 +78,7 @@ module.exports = function (app) {
       //json res format same as .get
      Book.findById(bookid, function(err, data){
        if (err) return res.json({error: 'no book exists'});
-       console.log(data);
+       
        data.comments.push(comment);
        data.save().then(function(update){
          res.json({_id: update._id, title: update.title, comments: update.comments})
