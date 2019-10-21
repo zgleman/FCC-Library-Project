@@ -75,8 +75,7 @@ module.exports = function (app) {
      Book.findById(bookid, function(err, data){
        if (err) return res.json({error: 'no book exists'});
        console.log(data);
-       data.comment = data.comment.push(comment);
-       
+       data.comments.push(comment);
        data.save().then(function(update){
          res.json({_id: update._id, title: update.title, comments: update.comments})
       
@@ -87,6 +86,7 @@ module.exports = function (app) {
     .delete(function(req, res){
       var bookid = req.params.id;
       //if successful response will be 'delete successful'
+     Book.findById
     });
   
 };
