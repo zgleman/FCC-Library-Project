@@ -36,6 +36,7 @@ module.exports = function (app) {
     .post(function (req, res){
       var title = req.body.title;
       //response will contain new book object including atleast _id and title
+      title == "" ? res.json({error: 'Please include book title'}) :
       Book.create({
         title: title
       }, function(err, data){
