@@ -74,9 +74,14 @@ module.exports = function (app) {
       //json res format same as .get
      Book.findById(bookid, function(err, data){
        if (err) return res.json({error: 'no book exists'});
+       console.log(data);
        data.comment = data.comment.push(comment);
        
-     })
+       data.save().then(function(update){
+         res.json({_id: update._id, title: update.title, comments: update.comments})
+      
+         })
+       })
     })
     
     .delete(function(req, res){
