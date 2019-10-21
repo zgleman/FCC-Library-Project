@@ -60,16 +60,11 @@ module.exports = function (app) {
     .get(function (req, res){
       var bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-    Book.countDocuments({_id: bookid}, function(err, count){
-      if(err) return (err);
-      if (count == 0){
-       res.json({error: 'no book exists'});
-      }
-      if (count == 1) {
+    
        Book.findById(bookid, function(err, data){
-        if (err) return (err) 
+        if (err) return res.json({err: 'no book exists'});
         res.json({_id: data._id, title: data.title, comments: data.comments});
-    })}
+    
        })
        })
     
@@ -77,6 +72,11 @@ module.exports = function (app) {
       var bookid = req.params.id;
       var comment = req.body.comment;
       //json res format same as .get
+     Book.findById(bookid, function(err, data){
+       if (err) return res.json({error: 'no book exists'});
+       data.comment = data.comment.push(comment);
+       
+     })
     })
     
     .delete(function(req, res){
